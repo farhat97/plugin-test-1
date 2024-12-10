@@ -3,7 +3,9 @@ Audio plugin using JUCE framework
 
 
 ### To build and run on Linux:
-- Navigate to /Builds/LinuxMakeFile
-    - If this directory doesn't exist, generate a MakeFile through Projucer
-- Run `sudo make`
-- Navigate to /LinuxMakeFile/build and run the program. In this case: `./PluginPractice`
+- Run the initial cmake command to generate the build directory: `cmake -S . -B build`
+    - Note that this will take a while since it will download JUCE and other stuff
+
+- Build by running the following command `cmake --build build`
+
+In order to run the standalone plugin, navigate to: `build > plugin > PluginTest_artefacts > Standalone` and run the `AudioTest` executable
