@@ -21,6 +21,10 @@ namespace audio_plugin
     g.fillAll(
         getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
+    // Trying out some gui functions like drawEllipse
+    juce::Rectangle rect = juce::Rectangle(27.0f, 27.0f, 27.0f, 27.0f);
+    g.drawEllipse(rect, 4.0f);
+
     g.setColour(juce::Colours::white);
     g.setFont(15.0f);
     g.drawFittedText("Hello World!", getLocalBounds(),
