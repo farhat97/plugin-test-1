@@ -12,6 +12,10 @@ Audio plugin using JUCE framework
 In order to run the standalone plugin, navigate to: build > plugin > PluginTest_artefacts > Standalone and run the AudioTest executable
 
 
+**Tip:** for debugging purposes, there is the AudioPluginHost program inside JUCE/extras/AudioPluginHost.
+
+This can be useful for testing changes. But in order to use the plugin we are writting with AudioPluginHost, we have to compile the plugin into All (instead of just standalone)
+
 ---
 
 ## JUCE General Info
