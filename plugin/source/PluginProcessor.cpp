@@ -1,6 +1,8 @@
 #include "PluginTest/PluginProcessor.h"
 #include "PluginTest/PluginEditor.h"
 
+// #include <juce_AudioProcessorValueTreeState.h>
+
 namespace audio_plugin {
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     : AudioProcessor(
@@ -143,7 +145,9 @@ bool AudioPluginAudioProcessor::hasEditor() const {
 }
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor() {
-  return new AudioPluginAudioProcessorEditor(*this);
+  // The return statement below is the default return for the createEditor() that comes with the example code
+  // return new AudioPluginAudioProcessorEditor(*this);
+  return new juce::GenericAudioProcessorEditor(*this);
 }
 
 void AudioPluginAudioProcessor::getStateInformation(
@@ -167,4 +171,19 @@ void AudioPluginAudioProcessor::setStateInformation(const void* data,
 // This function definition must be in the global namespace.
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
   return new audio_plugin::AudioPluginAudioProcessor();
+}
+
+// TODO: find a way to use JUCE namespace to avoid using the scope resolution operator (::) everywhere
+juce::AudioProcessorValueTreeState::ParameterLayout audio_plugin::AudioPluginAudioProcessor::createParameterLayout()
+{
+  juce::AudioProcessorValueTreeState::ParameterLayout params;
+
+  params.add(std::make_unique<juce::AudioParameterFloat>(
+      "delayTime", "Delay Time", juce::NormalisableRange<float>(1.0f, 2000.0f), 500.0f));
+  params.add(std::make_unique<juce::AudioParameterFloat>(
+      "feedback", "Feedback", juce::NormalisableRange<float>(0.0f, 0.95f), 0.5f));
+  params.add(std::make_unique<juce::AudioParameterFloat>(
+      "mix", "Mix", juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f));
+
+  return params;
 }
