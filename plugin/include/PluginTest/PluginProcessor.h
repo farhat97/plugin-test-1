@@ -2,11 +2,25 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+// Typedefs to avoid using resolution operators too much (::)
+typedef juce::AudioProcessorValueTreeState::ParameterLayout ParameterLayout; 
+typedef juce::AudioProcessorValueTreeState AudioProcessorValueTreeState;
+typedef juce::AudioParameterFloat AudioParameterFloat;
+typedef juce::AudioChannelSet AudioChannelSet;
+// TODO: these 2 typedefs don't work for some reason
+// typedef juce::NormalisableRange NormalisableRange;
+// typedef juce::AudioBuffer AudioBuffer;
+typedef juce::MidiBuffer MidiBuffer;
+typedef juce::AudioProcessorEditor AudioProcessorEditor;
+typedef juce::GenericAudioProcessorEditor GenericAudioProcessorEditor;
+
+
 namespace audio_plugin {
-class AudioPluginAudioProcessor : public juce::AudioProcessor {
+class PluginProcessor : public juce::AudioProcessor {
+
 public:
-  AudioPluginAudioProcessor();
-  ~AudioPluginAudioProcessor() override;
+  PluginProcessor();
+  ~PluginProcessor() override;
 
   void prepareToPlay(double sampleRate, int samplesPerBlock) override;
   void releaseResources() override;
@@ -36,11 +50,11 @@ public:
   void setStateInformation(const void* data, int sizeInBytes) override;
 
   // This is for defining the plugin's parameters
-  static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+  static ParameterLayout createParameterLayout();
   
-  juce::AudioProcessorValueTreeState apvts {*this, nullptr, "Parameters", createParameterLayout()};
+  AudioProcessorValueTreeState apvts {*this, nullptr, "Parameters", createParameterLayout()};
 
 private:
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessor)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)
 };
 }  // namespace audio_plugin
