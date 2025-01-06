@@ -176,11 +176,11 @@ ParameterLayout audio_plugin::PluginProcessor::createParameterLayout()
   ParameterLayout params;
 
   params.add(std::make_unique<AudioParameterFloat>(
-      "delayTime", "Delay Time", juce::NormalisableRange<float>(1.0f, 2000.0f), 500.0f));
+      "delayTime", "Delay Time", NormalisableRange(1.0f, 2000.0f), 500.0f));
   params.add(std::make_unique<AudioParameterFloat>(
-      "feedback", "Feedback", juce::NormalisableRange<float>(0.0f, 0.95f), 0.5f));
+      "feedback", "Feedback", NormalisableRange(0.0f, 0.95f), 0.5f));
   params.add(std::make_unique<AudioParameterFloat>(
-      "mix", "Mix", juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f));
+      "mix", "Mix", NormalisableRange(0.0f, 1.0f), 0.5f));
 
   return params;
 }

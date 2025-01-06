@@ -7,9 +7,7 @@ typedef juce::AudioProcessorValueTreeState::ParameterLayout ParameterLayout;
 typedef juce::AudioProcessorValueTreeState AudioProcessorValueTreeState;
 typedef juce::AudioParameterFloat AudioParameterFloat;
 typedef juce::AudioChannelSet AudioChannelSet;
-// TODO: these 2 typedefs don't work for some reason
-// typedef juce::NormalisableRange NormalisableRange;
-// typedef juce::AudioBuffer AudioBuffer;
+using NormalisableRange = juce::NormalisableRange<float>;
 typedef juce::MidiBuffer MidiBuffer;
 typedef juce::AudioProcessorEditor AudioProcessorEditor;
 typedef juce::GenericAudioProcessorEditor GenericAudioProcessorEditor;
