@@ -2,15 +2,14 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
-// Typedefs to avoid using resolution operators too much (::)
-typedef juce::AudioProcessorValueTreeState::ParameterLayout ParameterLayout; 
-typedef juce::AudioProcessorValueTreeState AudioProcessorValueTreeState;
-typedef juce::AudioParameterFloat AudioParameterFloat;
-typedef juce::AudioChannelSet AudioChannelSet;
+using ParameterLayout = juce::AudioProcessorValueTreeState::ParameterLayout;
+using AudioProcessorValueTreeState = juce::AudioProcessorValueTreeState;
+using AudioParameterFloat = juce::AudioParameterFloat;
+using AudioChannelSet = juce::AudioChannelSet;
 using NormalisableRange = juce::NormalisableRange<float>;
-typedef juce::MidiBuffer MidiBuffer;
-typedef juce::AudioProcessorEditor AudioProcessorEditor;
-typedef juce::GenericAudioProcessorEditor GenericAudioProcessorEditor;
+using MidiBuffer = juce::MidiBuffer;
+using AudioProcessorEditor = juce::AudioProcessorEditor;
+using GenericAudioProcessorEditor = juce::GenericAudioProcessorEditor;
 
 
 namespace audio_plugin {
