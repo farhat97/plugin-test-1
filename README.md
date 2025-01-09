@@ -16,6 +16,8 @@ In order to run the standalone plugin, navigate to: build > plugin > PluginTest_
 
 This can be useful for testing changes. But in order to use the plugin we are writting with AudioPluginHost, we have to compile the plugin into All (instead of just standalone)
 
+Easiest way to test changes: add a sine synth and connect the MIDI input node (red nodes on top of plugins) to it, and use the on-screen keyboard to play notes. Then obviously, connect the stereo outputs from the synth onto the plugin we are working on and we can hear any audio processing being made
+
 ---
 
 ## JUCE General Info
