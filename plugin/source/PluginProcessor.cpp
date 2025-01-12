@@ -73,10 +73,23 @@ void PluginProcessor::changeProgramName(int index,
 }
 
 void PluginProcessor::prepareToPlay(double sampleRate,
-                                              int samplesPerBlock) {
+                                    int samplesPerBlock) 
+{
   // Use this method as the place to do any pre-playback
   // initialisation that you need..
-  juce::ignoreUnused(sampleRate, samplesPerBlock);
+  
+  // juce::ignoreUnused(sampleRate, samplesPerBlock);
+
+  auto maxDelayTime = 2000.0f;
+
+  // TODO: what does the /1000.0f do?
+  auto maxDelaySamples = static_cast<int>(sampleRate * (maxDelayTime / 1000.0f));
+
+
+  // TODO: study this whole thing - I am assuming sampleRate and samplesPerBlock change constantly 
+  delayBuffer.resize(maxDelaySamples);
+  std::fill(delayBuffer.begin(), delayBuffer.end(), 0.0f);
+  writePosition = 0;
 }
 
 void PluginProcessor::releaseResources() {
@@ -109,13 +122,25 @@ bool PluginProcessor::isBusesLayoutSupported(
 }
 
 void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
-                                    MidiBuffer& midiMessages) {
+                                    MidiBuffer& midiMessages) 
+{
+
   juce::ignoreUnused(midiMessages);
 
   juce::ScopedNoDenormals noDenormals;
   auto totalNumInputChannels = getTotalNumInputChannels();
   auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+  // ---- Delay Setup ---- 
+  // TODO: check how these params are being used. Currently I use getValue() but that might not be the right thing
+  auto* delayTimeParam = this->apvts.getParameter("delayTime");
+  auto* delayFeedbackParam = this->apvts.getParameter("feedback");
+  auto* delayMixParam = this->apvts.getParameter("mix");
+
+  auto sampleRate = AudioProcessor::getSampleRate();
+  auto delaySamples = static_cast<int>(sampleRate * (delayTimeParam->getValue() / 1000.0f));
+
+  
   // In case we have more outputs than inputs, this code clears any output
   // channels that didn't contain input data, (because these aren't
   // guaranteed to be empty - they may contain garbage).
@@ -131,10 +156,22 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
   // the samples and the outer loop is handling the channels.
   // Alternatively, you can process the samples with the channels
   // interleaved by keeping the same state.
-  for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+  for (int channel = 0; channel < totalNumInputChannels; ++channel) 
+  {
     auto* channelData = buffer.getWritePointer(channel);
-    juce::ignoreUnused(channelData);
-    // ..do something to the data...
+    // juce::ignoreUnused(channelData);
+
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+    {
+      auto readPosition = (writePosition + delayBuffer.size() - delaySamples) % delayBuffer.size();
+      auto delayedSample = delayBuffer[readPosition];
+
+      delayBuffer[writePosition] = channelData[sample] * (1.0f - delayMixParam->getValue()) + delayedSample * delayMixParam->getValue();
+
+      writePosition = (writePosition + 1) % delayBuffer.size();
+
+    }
+
   }
 }
 
