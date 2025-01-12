@@ -18,6 +18,9 @@ This can be useful for testing changes. But in order to use the plugin we are wr
 
 Easiest way to test changes: add a sine synth and connect the MIDI input node (red nodes on top of plugins) to it, and use the on-screen keyboard to play notes. Then obviously, connect the stereo outputs from the synth onto the plugin we are working on and we can hear any audio processing being made
 
+Setup:
+![alt text](AudioPluginHost-setup.png)
+
 ---
 
 ## JUCE General Info
