@@ -36,6 +36,35 @@ Through some videos and external research I've found some useful info:
 
 - *Audio Processor Editor*: manages the plugin's UI
 
+### Audio Plugin Lifecycle
+1. Plugin *loaded* by the DAW
+
+    `AudioProcessor() // constructor`
+
+2. Plugin *configured* by DAW
+
+    `setStateInformation(const void* data, int sizeInBytes)`
+
+3. Plugin given the *sampling rate* and *audio buffer size*
+
+    `prepareToPlay(double sampleRate, int maxBufSize)`
+
+4. Audio callback *generates audio* buffers in real time (constant audio input)
+
+    `processBlock(AudioBuffer<float>&, MidiBuffer&) // many times`
+
+5. Plugin told to *finish playing*
+
+    `freeResources()`
+
+6. DAW *Saves* Current Plugin State
+
+    `getStateInformation(MemoryBlock& destData)`
+
+7. DAW *Unloads* Plugin:
+
+    `~AudioProcessor() // destructor`
+
 
 ### Audio Processing Concepts
 - *Buffer Handling*: Audio data is passed as juce::AudioBuffer<float> or juce::AudioBuffer<double>. Data is processed per channel or sample
