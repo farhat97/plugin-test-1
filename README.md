@@ -21,6 +21,12 @@ Easiest way to test changes: add a sine synth and connect the MIDI input node (r
 Setup:
 ![alt text](AudioPluginHost-setup.png)
 
+Note for Mac OS: To build program, run `xcodebuild` inside /AudioPluginHost/Builds/MacOSX.
+
+You *have* to have xcode installed which annoys me so much but oh well
+
+After building, executable is found in /MacOSX/build/Debug/AudioPluginHost.app/Contents/MacOS
+
 ---
 
 ## JUCE General Info
