@@ -46,6 +46,7 @@ public:
   void getStateInformation(juce::MemoryBlock& destData) override;
   void setStateInformation(const void* data, int sizeInBytes) override;
 
+  float getInterpolatedSample(float* buffer, int size, float readPosition);
   // This is for defining the plugin's parameters
   static ParameterLayout createParameterLayout();
   

@@ -137,8 +137,11 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
   float delayMix = *apvts.getRawParameterValue("mix");
 
   auto sampleRate = AudioProcessor::getSampleRate();
-  auto delaySamples = static_cast<int>(sampleRate * (delayTime / 1000.0f));
+  // auto delaySamples = static_cast<int>(sampleRate * (delayTime / 1000.0f));
+  auto delaySamples = sampleRate * (delayTime / 1000.0f);
 
+
+  float feedback = juce::jlimit(0.0f, 0.95f, delayFeedback);
   
   // In case we have more outputs than inputs, this code clears any output
   // channels that didn't contain input data, (because these aren't
@@ -162,11 +165,19 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
     {
-      auto readPosition = (writePosition + delayBuffer.size() - delaySamples) % delayBuffer.size();
-      auto delayedSample = delayBuffer[readPosition];
+      // auto readPosition = (writePosition - delaySamples + delayBuffer.size()) % delayBuffer.size();
+      float readPosition = static_cast<float>(writePosition) - delaySamples;
+
+      if (readPosition < 0)
+      {
+        readPosition += delayBuffer.size();
+      }
+
+      // auto delayedSample = delayBuffer[readPosition];
+      auto delayedSample = getInterpolatedSample(delayBuffer.data(), delayBuffer.size(), readPosition);
 
       // Apply feedback / store it in delay buffer
-      delayBuffer[writePosition] = channelData[sample] * (1.0f - delayMix) + delayedSample * delayFeedback;
+      delayBuffer[writePosition] = channelData[sample] * (1.0f - delayMix) + delayedSample * feedback;
 
 
       // Mix the dry and wet signals
@@ -178,6 +189,17 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     }
 
   }
+}
+
+// Linear interpolation for smoother delay changes
+float PluginProcessor::getInterpolatedSample(float* buffer, int size, float readPosition)
+{
+  int index1 = static_cast<int>(readPosition);
+  int index2 = (index1 + 1) % size;
+
+  float fraction = readPosition - index1;
+  
+  return buffer[index1] * (1.0f - fraction) + buffer[index2] * fraction;
 }
 
 bool PluginProcessor::hasEditor() const {
