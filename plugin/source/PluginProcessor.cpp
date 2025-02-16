@@ -80,15 +80,20 @@ void PluginProcessor::prepareToPlay(double sampleRate,
   
   // juce::ignoreUnused(sampleRate, samplesPerBlock);
 
-  auto maxDelayTime = 2000.0f;
+  // auto maxDelayTime = 2000.0f;
 
   // TODO: what does the /1000.0f do?
-  auto maxDelaySamples = static_cast<int>(sampleRate * (maxDelayTime / 1000.0f));
+  // auto maxDelaySamples = static_cast<int>(sampleRate * (maxDelayTime / 1000.0f));
+  
+  int delayBufferSize = static_cast<int>(sampleRate * 2.0); // 2 seconds max delay
 
 
   // TODO: study this whole thing - I am assuming sampleRate and samplesPerBlock change constantly 
-  delayBuffer.resize(maxDelaySamples);
+  // delayBuffer.resize(maxDelaySamples);
+  delayBuffer.resize(delayBufferSize, 0.0f);
   std::fill(delayBuffer.begin(), delayBuffer.end(), 0.0f);
+  
+  // Reset write position
   writePosition = 0;
 }
 
@@ -177,8 +182,12 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
       auto delayedSample = getInterpolatedSample(delayBuffer.data(), delayBuffer.size(), readPosition);
 
       // Apply feedback / store it in delay buffer
-      delayBuffer[writePosition] = channelData[sample] * (1.0f - delayMix) + delayedSample * feedback;
-
+      // delayBuffer[writePosition] = channelData[sample] * (1.0f - delayMix) + delayedSample * feedback;
+      
+      if (writePosition >= 0 && writePosition < delayBuffer.size()) 
+      {
+        delayBuffer[writePosition] = channelData[sample] + (delayedSample * feedback);
+      }
 
       // Mix the dry and wet signals
       channelData[sample] = channelData[sample] * (1.0f - delayMix) + delayedSample * delayMix;
