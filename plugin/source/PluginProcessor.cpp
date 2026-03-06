@@ -88,27 +88,23 @@ namespace audio_plugin
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 
-    // juce::ignoreUnused(sampleRate, samplesPerBlock);
-
-    // auto maxDelayTime = 2000.0f;
-
-    // TODO: what does the /1000.0f do?
-    // auto maxDelaySamples = static_cast<int>(sampleRate * (maxDelayTime / 1000.0f));
-
+    // TODO: 2 seconds might be too much
     int delayBufferSize = static_cast<int>(sampleRate * 2.0); // 2 seconds max delay
 
+    int numChannels = getTotalNumOutputChannels();
 
-    // TODO: study this whole thing - I am assuming sampleRate and samplesPerBlock change constantly
-    // delayBuffer.resize(maxDelaySamples);
-    delayBuffer.resize(delayBufferSize, 0.0f);
-    std::fill(delayBuffer.begin(), delayBuffer.end(), 0.0f);
+    delayBuffer.setSize(numChannels, delayBufferSize);
 
-    // Reset write position
-    writePosition = 0;
+    delayBuffer.clear();
+
+    // Reset and initialize write position for each channel
+    writePosition.resize(numChannels);
+    std::fill(writePosition.begin(), writePosition.end(), 0);
   }
 
   void PluginProcessor::releaseResources()
   {
+    // TODO: ->
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
   }
@@ -166,7 +162,7 @@ namespace audio_plugin
     // This is here to avoid people getting screaming feedback
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; i++)
       buffer.clear(i, 0, buffer.getNumSamples());
 
     // This is the place where you'd normally do the guts of your plugin's
@@ -175,37 +171,42 @@ namespace audio_plugin
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+
+    // TODO: read about channels and learn how to visualize this
+    for (int channel = 0; channel < buffer.getNumChannels(); channel++)
     {
       auto* channelData = buffer.getWritePointer(channel);
+      auto* delayData = delayBuffer.getWritePointer(channel);
+      int delayBufferLength = delayBuffer.getNumSamples();
       // juce::ignoreUnused(channelData);
 
-      for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+      for (int sample = 0; sample < buffer.getNumSamples(); sample++)
       {
-        // auto readPosition = (writePosition - delaySamples + delayBuffer.size()) % delayBuffer.size();
-        float readPosition = static_cast<float>(writePosition) - delaySamples;
+        // Use the write position for THIS channel
+        float readPosition = static_cast<float>(writePosition[channel]) - delaySamples;
 
         if (readPosition < 0)
         {
-          readPosition += delayBuffer.size();
+          readPosition += delayBufferLength;
         }
 
-        // auto delayedSample = delayBuffer[readPosition];
-        auto delayedSample = getInterpolatedSample(delayBuffer.data(), delayBuffer.size(), readPosition);
+        // Pass the delay data for this specific channel
+        auto delayedSample = getInterpolatedSample(delayData, delayBufferLength, readPosition);
+
+        // Store in this channel's delay buffer
+        if (writePosition[channel] >= 0 && writePosition[channel] < delayBufferLength)
+        {
+          delayData[writePosition[channel]] = channelData[sample] + (delayedSample * feedback);
+        }
 
         // Apply feedback / store it in delay buffer
         // delayBuffer[writePosition] = channelData[sample] * (1.0f - delayMix) + delayedSample * feedback;
-
-        if (writePosition >= 0 && writePosition < delayBuffer.size())
-        {
-          delayBuffer[writePosition] = channelData[sample] + (delayedSample * feedback);
-        }
-
+        
         // Mix the dry and wet signals
         channelData[sample] = channelData[sample] * (1.0f - delayMix) + delayedSample * delayMix;
 
         // Increment write position (circular buffer logic)
-        writePosition = (writePosition + 1) % delayBuffer.size();
+        writePosition[channel] = (writePosition[channel] + 1) % delayBufferLength;
 
       }
 

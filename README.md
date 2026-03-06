@@ -21,6 +21,9 @@ Easiest way to test changes: add a sine synth and connect the MIDI input node (r
 Setup:
 ![alt text](AudioPluginHost-setup.png)
 
+Setup to run live instrument:
+![alt text](live-instrument-test.png)
+
 Note for Mac OS: To build program, run `xcodebuild` inside /AudioPluginHost/Builds/MacOSX.
 
 You *have* to have xcode installed which annoys me so much but oh well
