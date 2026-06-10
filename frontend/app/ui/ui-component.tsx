@@ -2,9 +2,14 @@ import { useState } from "react";
 import { Knob } from "~/components/knob/knob";
 import './ui-component-style.css';
 
-export const UiComponent = () => {
+interface UiComponentProps {
+    delayTime: number;
+    onDelayTimeChange: (value: number) => void;
+};
+
+export const UiComponent = (props: UiComponentProps) => {
     const [feedback, setFeedback] = useState(0.5);
-    const [delayTime, setDelayTime] = useState(0.5);
+    // const [delayTime, setDelayTime] = useState(0.5);
     const [mix, setMix] = useState(0.5);
 
     return (
@@ -47,8 +52,8 @@ export const UiComponent = () => {
                 <div className="relative z-10 flex justify-between items-center gap-8 mb-8">
                 <Knob 
                     label="DELAY TIME" 
-                    value={delayTime} 
-                    onChange={setDelayTime}
+                    value={props.delayTime} 
+                    onChange={props.onDelayTimeChange}
                     unit="ms"
                     minValue={0}
                     maxValue={2000}

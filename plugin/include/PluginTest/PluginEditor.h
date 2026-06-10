@@ -20,6 +20,13 @@ namespace audio_plugin
       // access the processor object that created it.
       PluginProcessor& processorRef;
 
-      JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
+      // Event handlers for JavaScript
+      void handleSliderEvent(const juce::String& id, const juce::var& data);
+
+      juce::WebSliderRelay delayTimeRelay;
+
+      std::unique_ptr<juce::WebSliderParameterAttachment> delayTimeAttachment;
+
+      juce::WebBrowserComponent browserComponent;
   };
 }  // namespace audio_plugin

@@ -19,6 +19,17 @@ juce_add_plugin(${PROJECT_NAME}
     PRODUCT_NAME "AudioTest" 
 )
 
+juce_add_binary_data(PluginTestData                                                                     
+    SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/home-D_WsxUPk.js
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/entry.client-DjiVrXLW.js
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/root-aw8ZgzUO.js
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/root-DqY-su-W.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/ui-component-style-DbTLHB1L.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/chunk-EPOLDU6W-B3LbXnth.js
+        ${CMAKE_CURRENT_SOURCE_DIR}/../frontend/build/client/assets/manifest-fc3170bf.js
+)
+
 # Sets the source files of the plugin project.
 target_sources(${PROJECT_NAME}
     PRIVATE
@@ -39,6 +50,8 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         juce::juce_audio_utils
+        juce::juce_gui_extra
+        PluginTestData
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
@@ -48,7 +61,7 @@ target_link_libraries(${PROJECT_NAME}
 # These definitions are recommended by JUCE.
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-        JUCE_WEB_BROWSER=0
+        JUCE_WEB_BROWSER=1
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
 )

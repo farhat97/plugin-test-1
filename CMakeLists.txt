@@ -19,6 +19,15 @@ set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 # Downloads CPM if not already downloaded. CPM is an easy-to-use package manager nicely integrated with CMake.
 include(cmake/cpm.cmake)
 
+# Find GTK and WebKit
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+pkg_check_modules(WEBKIT2 REQUIRED webkit2gtk-4.1)
+
+# Make sure JUCE can find them
+include_directories(${GTK3_INCLUDE_DIRS})
+include_directories(${WEBKIT2_INCLUDE_DIRS})
+
 # This commands downloads AND configures JUCE. It sets up some variables, like JUCE_SOURCE_DIR.
 CPMAddPackage(
     NAME JUCE

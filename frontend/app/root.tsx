@@ -9,6 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { useJuceSlider } from "./hooks/useJuceEvents";
+import { UiComponent } from "./ui/ui-component";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -42,7 +44,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  // Parameter binding
+  const [delayTime, setDelayTime] = useJuceSlider("delayTime", 500.0);
+
+  // return <Outlet />;
+  return <UiComponent delayTime={delayTime} onDelayTimeChange={setDelayTime} />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
