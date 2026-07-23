@@ -37,7 +37,7 @@ export const UiComponent = (props: UiComponentProps) => {
                             color: '#282a2c',
                             textShadow: '2px 2px 0px rgba(255, 255, 255, 0.3)'
                             }}>
-                        Frankyy-y
+                        Delaysito
                         </h1>
                         <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-red-600 rounded-full pulse-glow" />
